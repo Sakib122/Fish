@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশের মাছ চেনার কুইজ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #quiz-container {
+            background: white;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        #score-board {
+            font-weight: 700;
+            color: #16a085;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        /* ৩ পার্টের ছবি দেখানোর স্টাইল */
+        #image-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #e0f7fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .img-part {
+            background: #b2ebf2;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 150px;
+            position: relative;
+            border: 2px solid #80deea;
+        }
+        .img-part img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .part-label {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 12px;
+            padding: 4px 0;
+            text-align: center;
+        }
+        
+        #question-text {
+            color: #34495e;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        #options-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #2980b9;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background: #3498db;
+            color: white;
+        }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .correct-btn {
+            background: #2ecc71 !important;
+            color: white !important;
+            border-color: #2ecc71 !important;
+        }
+        .wrong-btn {
+            background: #e74c3c !important;
+            color: white !important;
+            border-color: #e74c3c !important;
+        }
+        #feedback-section {
+            display: none;
+            background: #fdf2e9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #e67e22;
+            text-align: left;
+            margin-top: 20px;
+        }
+        #feedback-title {
+            margin-top: 0;
+            color: #d35400;
+        }
+        #feedback-desc {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #34495e;
+        }
+        #next-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+        #next-btn:hover {
+            background: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>🐟 বাংলাদেশের মাছ চেনার কুইজ 🐟</h1>
+    <div id="score-board">স্কোর: ০/৬</div>
+    
+    <div id="image-section">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে ছবির ৩টি পার্ট এখানে আসবে -->
+    </div>
+
+    <h2 id="question-text">ছবির ৩টি পার্ট দেখে মাছটি চিনতে পারছেন?</h2>
+    
+    <div id="options-section">
+        <!-- জাভাস্ক্রিপ্ট দিয়ে অপশন এখানে আসবে -->
+    </div>
+
+    <div id="feedback-section">
+        <h3 id="feedback-title"></h3>
+        <p id="feedback-desc"></p>
+    </div>
+    
+    <button id="next-btn" onclick="nextQuestion()">পরবর্তী প্রশ্ন ➡️</button>
+</div>
+
+<script>
+    // বাংলাদেশের মাছের ডাটাবেস (ছবি, নাম, অপশন, এবং বর্ণনা)
+    const fishes = [
+        {
+            name: "ইলিশ",
+            img: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Hilsa_fish.jpg",
+            options: ["ইলিশ", "কাতলা", "পাঙ্গাস", "বোয়াল"],
+            desc: "এটি বাংলাদেশের জাতীয় মাছ ইলিশ। চিনার উপায়: মাছটির গায়ের রঙ উজ্জ্বল রূপালি। পেটের দিকে কয়েকটি ধারালো খাঁজ বা কীল (Keel) আছে। এর আকার চাপা ও গাঢ় নীলচে সবুজের ওপর রূপালি আভা দেখা যায়। সামুদ্রিক পরিবেশের এই মাছ স্বাদে অতুলন।"
+        },
+        {
+            name: "রুই",
+            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Labeo_rohita_by_Sukhraj.jpg/300px-Labeo_rohita_by_Sukhraj.jpg",
+            options: ["রুই", "মৃগেল", "কাতলা", "তেলাপিয়া"],
+            desc: "এটি বাংলাদেশের অন্যতম প্রধান কার্প জাতীয় মাছ রুই। চিনার উপায়: মাছটির আকার বেশ বড় ও পাশ্বদেশ গোলাকার। গায়ের রঙ ধাতু বা সবুজাভ এবং পেটের দিক রূপালি। এর আঁশ বেশ বড় আকারের হয় এবং মুখের দিকে কোনো শুড় বা গন্ধ থাকে না, যা দিয়ে কাতলা থেকে আলাদা করা যায়।"
+        },
+        {
+            name: "কাতলা",
+            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Catla_catla.jpg/300px-Catla_catla.jpg",
+            options: ["কই", "রুই", "কাতলা", "বোয়াল"],
+            desc: "এটি কার্প জাতীয় আরেকটি জনপ্রিয় মাছ কাতলা। চিনার উপায়: কাতলার মাথা রুই মাছের তুলনায় অনেক বড় এবং চওড়া। এর মুখ উপরের দিকে হাঁ করা থাকে, কারণ এটি পানির উপরের স্তর থেকে খাবার খায়। চোখ ছোট আর মাথা বড় হওয়াই এর প্রধান পরিচয়।"
+        },
+        {
+            name: "বোয়াল",
+            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Wallago_attu.jpg/300px-Wallago_attu.jpg",
+            options: ["বোয়াল", "শোল", "গোজাইর", "পাঙ্গাস"],
+            desc: "এটি বাংলাদেশের বড় আকারের একটি শিকারি মাছ বোয়াল। চিনার উপায়: বোয়াল মাছের গায়ে কোনো আঁশ থাকে না, গায় মসৃণ। এর মুখ অত্যন্ত চওড়া এবং চোয়াল বড়। মুখের দিকে দুটি বড় শুড় বা গন্ধ থাকে। এরা অন্য ছোট মাছ শিকার করে খায়।"
+        },
+        {
+            name: "শোল",
+            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Channa_striata_%28Stripe-headed_snakehead%29.jpg/300px-Channa_striata_%28Stripe-headed_snakehead%29.jpg",
+            options: ["তাকি", "শোল", "বোয়াল", "গোজাইর"],
+            desc: "এটি সাপের মাথার মতো দেখতে শোল মাছ (Snakehead)। চিনার উপায়: মাছটির মাথা সাপের মাথার মতো চ্যাপ্টা ও লম্বা। গায়ের রঙ গাঢ় বাদামি বা কালচে এবং ডানায় কালচে বাদামি রঙের বড় বড় দাগ বা পটি থাকে। এরা সাধারণত কাদা বা নর্দমানা পানিতেও বাঁচতে পারে।"
+        },
+        {
+            name: "পাঙ্গাস",
+            img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Pangasius_hypophthalmus.jpg/300px-Pangasius_hypophthalmus.jpg",
+            options: ["পাঙ্গাস", "ইলিশ", "রুই", "বোয়াল"],
+            desc: "এটি বর্তমানে বাংলাদেশে ব্যাপক চাষ হওয়া পাঙ্গাস মাছ। চিনার উপায়: মাছটির গায়ের রঙ রূপালি বা নীলচে, তবে পেটের দিক সাদাটে। মুখে দুটি শুড় থাকে এবং মাছটির আকার বেশ লম্বাটে ও চ্যাপ্টা হয়। লেজের দিকটা গাঢ় নীল বা কালচে দেখা যায়।"
+        }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const fish = fishes[current];
+        
+        // কুইজ এরিয়া আপডেট
+        document.getElementById('question-text').innerText = `প্রশ্ন ${current + 1}: ছবির ৩টি পার্ট দেখে মাছটি চিনতে পারছেন?`;
+        document.getElementById('feedback-section').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        // ৩ পার্টের ছবি লোড করা
+        const imgContainer = document.getElementById('image-section');
+        imgContainer.innerHTML = '';
+        
+        const clipPaths = ['inset(0 60% 0 0)', 'inset(0 30% 0 30%)', 'inset(0 0 0 60%)'];
+        const labels = ['সামনের অংশ (মাথা)', 'মাঝখানের অংশ', 'পেছনের অংশ (লেজ)'];
+
+        clipPaths.forEach((clip, index) => {
+            let div = document.createElement('div');
+            div.className = 'img-part';
+
+            let img = document.createElement('img');
+            img.src = fish.img;
+            img.alt = "মাছের অংশ";
+            img.style.clipPath = clip;
+            // যদি কোনো কারণে ছবি না আসে, তাহলে যেন ক্র্যাশ না করে
+            img.onerror = function() { this.src = "https://via.placeholder.com/150x100?text=ছবি+পাওয়া+যায়নি"; };
+
+            let label = document.createElement('div');
+            label.className = 'part-label';
+            label.innerText = labels[index];
+
+            div.appendChild(img);
+            div.appendChild(label);
+            imgContainer.appendChild(div);
+        });
+
+        // অপশন লোড করা
+        const optContainer = document.getElementById('options-section');
+        optContainer.innerHTML = '';
+        
+        // অপশন র‍্যান্ডমলি সাজানো
+        const shuffledOptions = [...fish.options].sort(() => Math.random() - 0.5);
+
+        shuffledOptions.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt, fish.name, btn);
+            optContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, correct, btn) {
+        const fish = fishes[current];
+        // সব বাটন ডিসেবল করে দেওয়া
+        const allBtns = document.querySelectorAll('#options-section button');
+        allBtns.forEach(b => b.disabled = true);
+
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackDesc = document.getElementById('feedback-desc');
+
+        if (selected === correct) {
+            btn.classList.add('correct-btn');
+            feedbackTitle.innerText = "✅ একদম সঠিক! চমৎকার!";
+            score++;
+        } else {
+            btn.classList.add('wrong-btn');
+            feedbackTitle.innerText = "❌ ভুল হয়েছে!";
+            // সঠিক উত্তরটা হাইলাইট করা
+            allBtns.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct-btn');
+            });
+        }
+
+        // মাছের বর্ণনা দেখানো
+        feedbackDesc.innerText = fish.desc;
+        document.getElementById('feedback-section').style.display = 'block';
+        document.getElementById('score-board').innerText = `স্কোর: ${score}/${fishes.length}`;
+        
+        // পরবর্তী বাটন দেখানো
+        if(current < fishes.length - 1) {
+            document.getElementById('next-btn').innerText = "পরবর্তী প্রশ্ন ➡️";
+        } else {
+            document.getElementById('next-btn').innerText = "ফলাফল দেখুন 🏆";
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        current++;
+        if (current < fishes.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        const container = document.getElementById('quiz-container');
+        let message = "";
+        if(score === fishes.length) message = "অসাধারণ! আপনি বাংলাদেশের মাছের বিশেষজ্ঞ!";
+        else if(score >= fishes.length / 2) message = "বেশ ভালো! আপনার ধারণা প্রায় ঠিকই আছে।";
+        else message = "আপনার আরও মাছ নিয়ে পড়াশোনা করা উচিত!";
+
+        container.innerHTML = `
+            <h1>কুইজ শেষ!</h1>
+            <h2 style="color: #16a085;">আপনার স্কোর: ${score}/${fishes.length}</h2>
+            <p style="font-size: 18px; color: #555;">${message}</p>
+            <button onclick="location.reload()" style="background: #3498db; color: white; border: none; margin-top: 20px;">আবার খেলুন 🔄</button>
+        `;
+    }
+
+    // কুইজ শুরু
+    loadQuestion();
+</script>
+
+</body>
+</html>
